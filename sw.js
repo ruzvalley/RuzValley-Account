@@ -1,5 +1,5 @@
 
-const CACHE_NAME = "ruz-valley-accounts-v1";
+const CACHE_NAME = "ruz-valley-accounts-v2";
 
 const FILES = [
   "./",
@@ -38,12 +38,14 @@ self.addEventListener("fetch", event => {
   ) return;
 
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, { cache: "no-store" })
       .then(response => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache =>
-          cache.put(event.request, copy)
-        );
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then(cache =>
+            cache.put(event.request, copy)
+          );
+        }
         return response;
       })
       .catch(() =>
